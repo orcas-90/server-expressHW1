@@ -1,16 +1,47 @@
 const express = require('express');
+const path = require('path');
+const fs = require('fs');
 const port = 3000;
 const cors = require('cors');
 const app = express();
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
 
 app.use(cors());
-app.get('/', (req, res) => {
-  let count = req.query.count || 10;
-  
-  console.log(count)
-  res.json(count);
-});
+let count;
 
 app.listen(port, () => {
   console.log(`Приложение запущено и слушает порт ${port}`);
+});
+
+app.put('/count/create:id', (req, res) => {
+  const id = req.params.id;
+  let count = req.body.count;
+  const database = fs.readFileSync(
+    path.join(__dirname, 'database.json'),
+    'utf-8'
+  );
+
+  const data = JSON.parse(database);
+  if (data.id === +id) {
+    count = +count + 1;
+
+    fs.writeFileSync(
+      path.join(__dirname, 'database.json'),
+      JSON.stringify(data, null, 4),
+      'utf-8'
+    );
+
+    res.send(
+      JSON.stringify({
+        id,
+        count,
+      })
+    );
+    return;
+  } else res.sendStatus(404);
+});
+
+app.get('/', (req, res) => {
+  res.sendFile('/Users/nnl/expressHW1/database.json');
 });
