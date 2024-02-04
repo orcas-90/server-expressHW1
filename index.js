@@ -22,16 +22,17 @@ app.put('/count/create:id', (req, res) => {
     'utf-8'
   );
 
-  const data = JSON.parse(database);
+  let data = JSON.parse(database);
   if (data.id === +id) {
     count = +count + 1;
-
+    data.count = count
+   console.log(data)
     fs.writeFileSync(
       path.join(__dirname, 'database.json'),
       JSON.stringify(data, null, 4),
       'utf-8'
     );
-
+  console.log(data)
     res.send(
       JSON.stringify({
         id,
