@@ -14,8 +14,7 @@ app.listen(port, () => {
   console.log(`Приложение запущено и слушает порт ${port}`);
 });
 
-app.put('/count/create:id', (req, res) => {
-  const id = req.params.id;
+app.put('/count/create', (req, res) => {
   let count = req.body.count;
   const database = fs.readFileSync(
     path.join(__dirname, 'database.json'),
@@ -23,24 +22,21 @@ app.put('/count/create:id', (req, res) => {
   );
 
   let data = JSON.parse(database);
-  if (data.id === +id) {
-    count = +count + 1;
-    data.count = count
-   console.log(data)
-    fs.writeFileSync(
-      path.join(__dirname, 'database.json'),
-      JSON.stringify(data, null, 4),
-      'utf-8'
-    );
-  console.log(data)
-    res.send(
-      JSON.stringify({
-        id,
-        count,
-      })
-    );
-    return;
-  } else res.sendStatus(404);
+
+  count = +count + 1;
+  data.count = count;
+  console.log(data);
+  fs.writeFileSync(
+    path.join(__dirname, 'database.json'),
+    JSON.stringify(data, null, 4),
+    'utf-8'
+  );
+  console.log(data);
+  res.send(
+    JSON.stringify({
+      count,
+    })
+  );
 });
 
 app.get('/', (req, res) => {
